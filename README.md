@@ -10,9 +10,12 @@ It's colorful and interactive. You can:
     - Rank the job descriptions that are most closely aligned with your resume. This will help you target positions that you will likely have better odds
       of landing an interview.
 
-llama3.2 is just fine if you are wondering. 
+llama3.2 works great for this - small and lightweight. 
 
-Storage: Storage is currently local storage, If you uninstall the extenstion, you will lose your hard efforts. 
+## Storage 
+
+If you are a beast with your own methods, choose dev branch (local storage configured). 
+If you just wanna get to searching, choose main branch.
 
 ## Support
 
