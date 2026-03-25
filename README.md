@@ -36,3 +36,11 @@ Right click:
 2. Copy this repo.
 3. Go to google--> extensions -->manage extensions -->Load unpacked
 4. Make sure the extension is toggles on, and it should work!
+
+## Coffee
+
+<a href="https://www.paypal.com/ncp/payment/NZELSQ7ST82WU">Coffee for developer!</a> THANK YOU!
+
+If you can't buy a coffee, can you star my repo? THANK YOU!
+
+
