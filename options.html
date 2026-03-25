@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Seeker – Full List</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+
+  <div class="page-header">
+    <div class="page-title">
+      <span class="logo">💼</span>
+      <h1>Job Seeker</h1>
+      <span id="total-count" class="badge">0 jobs</span>
+    </div>
+    <div class="header-actions">
+      <button id="btn-export-csv" class="btn btn-secondary">⬇ Export CSV</button>
+      <button id="btn-clear-all"  class="btn btn-danger">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <!-- Add Job Form -->
+  <section id="add-form-section" class="card">
+    <h2 class="section-title">Add Job Manually</h2>
+    <form id="add-job-form" autocomplete="off">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="f-title">Job Title *</label>
+          <input id="f-title" type="text" placeholder="e.g. Software Engineer Intern" required>
+        </div>
+        <div class="form-group">
+          <label for="f-company">Company</label>
+          <input id="f-company" type="text" placeholder="e.g. Acme Corp">
+        </div>
+        <div class="form-group">
+          <label for="f-location">Location</label>
+          <input id="f-location" type="text" placeholder="e.g. Remote, Chicago IL">
+        </div>
+        <div class="form-group">
+          <label for="f-source">Source</label>
+          <select id="f-source">
+            <option value="Manual">Manual</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Indeed">Indeed</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label for="f-url">URL *</label>
+          <input id="f-url" type="url" placeholder="https://…" required>
+        </div>
+        <div class="form-group full-width">
+          <label for="f-description">Job Description <span style="font-weight:400;color:#555">(paste for better AI matching)</span></label>
+          <textarea id="f-description" rows="3" placeholder="Paste the full job description here…"></textarea>
+        </div>
+        <div class="form-group full-width">
+          <label for="f-notes">Notes</label>
+          <textarea id="f-notes" rows="2" placeholder="e.g. deadline, referral contact…"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">＋ Add Job</button>
+        <span id="add-status" class="add-status"></span>
+      </div>
+    </form>
+  </section>
+
+  <!-- AI Match Analysis -->
+  <section id="ai-section" class="card ai-card">
+    <h2 class="section-title">🤖 AI Match Analysis</h2>
+    <div class="ai-grid">
+
+      <div class="ai-col">
+        <div class="form-group">
+          <label for="resume-text">Your Resume</label>
+          <textarea id="resume-text" rows="10" placeholder="Paste your full resume text here…"></textarea>
+        </div>
+        <div class="ai-row">
+          <button id="btn-save-resume" class="btn btn-secondary">💾 Save Resume</button>
+          <span id="resume-status" class="add-status"></span>
+        </div>
+      </div>
+
+      <div class="ai-col">
+        <div class="form-group">
+          <label for="ollama-url">Ollama URL</label>
+          <input id="ollama-url" type="text" value="http://localhost:11434" placeholder="http://localhost:11434">
+        </div>
+        <div class="form-group">
+          <label for="ollama-model">Model</label>
+          <input id="ollama-model" type="text" value="llama3.2" placeholder="e.g. llama3.2, mistral, gemma3">
+        </div>
+        <div class="ai-row">
+          <button id="btn-test-ollama" class="btn btn-secondary">🔌 Test Connection</button>
+          <span id="ollama-status" class="add-status"></span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="btn-analyze" class="btn btn-analyze" style="flex:1">✨ Analyze All Jobs</button>
+          <button id="btn-test-one" class="btn btn-secondary" title="Run analysis on the first job only to verify Ollama is working">🧪 Test 1</button>
+        </div>
+        <p class="ai-tip">💡 For best results, scrape individual job detail pages while logged in — the full description will be captured automatically and used here.</p>
+        <div id="analyze-progress" class="analyze-progress hidden">
+          <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+          <span id="progress-text" class="progress-text">Starting…</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section class="card filters-card">
+    <div class="filters-row">
+      <input type="text" id="filter-input" placeholder="Search title, company, notes…">
+      <select id="source-filter">
+        <option value="">All Sources</option>
+        <option value="LinkedIn">LinkedIn</option>
+        <option value="Indeed">Indeed</option>
+        <option value="GitHub">GitHub</option>
+        <option value="Google">Google</option>
+        <option value="IBM">IBM</option>
+        <option value="Microsoft">Microsoft</option>
+        <option value="Nvidia">Nvidia</option>
+        <option value="AMD">AMD</option>
+        <option value="Adobe">Adobe</option>
+        <option value="Manual">Manual</option>
+        <option value="Other">Other</option>
+      </select>
+      <select id="sort-select">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="match">✨ Best Match</option>
+        <option value="title">Title A–Z</option>
+        <option value="company">Company A–Z</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Job table -->
+  <section class="card table-card">
+    <table id="jobs-table">
+      <thead>
+        <tr>
+          <th class="col-match">Match</th>
+          <th class="col-title">Title</th>
+          <th class="col-company">Company</th>
+          <th class="col-location">Location</th>
+          <th class="col-source">Source</th>
+          <th class="col-date">Added</th>
+          <th class="col-desc">Description</th>
+          <th class="col-notes">Notes</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody id="jobs-tbody"></tbody>
+    </table>
+    <p id="empty-msg" class="empty-msg hidden">No jobs match your filters.</p>
+  </section>
+
+  <script src="options.js"></script>
+</body>
+</html>

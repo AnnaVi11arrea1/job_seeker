@@ -1,0 +1,278 @@
+/* ── Reset / Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 420px;
+  min-height: 200px;
+  max-height: 580px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+  color: #fff;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  background: #000;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, #ff7c00, #ffe600, #00ff88, #00e5ff, #7b68ee, #bf5fff) 1;
+}
+
+.header-title { display: flex; align-items: center; gap: 7px; }
+.logo { font-size: 18px; }
+
+h1 {
+  font-size: 15px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ff7c00, #ffe600, #00ff88, #00e5ff, #7b68ee, #bf5fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.badge {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #aaa;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────── */
+section {
+  padding: 8px 12px;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.search-section  { background: #0d0d1a; border-left: 3px solid #7b68ee; }
+.company-section { background: #001a1a; border-left: 3px solid #00e5ff; }
+.scrape-section  { background: #001a0d; border-left: 3px solid #00ff88; }
+.filter-section  { background: #1a1500; border-left: 3px solid #ffe600; }
+
+.section-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* ── Search grid ──────────────────────────────────────────────────────── */
+.search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn {
+  border: none;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+  white-space: nowrap;
+  text-align: left;
+}
+.btn:hover  { opacity: 0.85; box-shadow: 0 0 10px currentColor; }
+.btn:active { transform: scale(0.97); }
+
+.btn-linkedin { background: #7b68ee; color: #000; }
+.btn-indeed   { background: #f59e0b; color: #000; }
+
+.btn-scrape {
+  width: 100%;
+  background: linear-gradient(90deg, #ff7c00, #ffe600, #00ff88, #00e5ff, #7b68ee, #bf5fff);
+  color: #000;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  border-radius: 6px;
+  border: none;
+  letter-spacing: 0.5px;
+}
+
+.btn-secondary {
+  background: #1a1a1a;
+  color: #bf5fff;
+  border: 1px solid #bf5fff;
+  font-size: 12px;
+}
+.btn-secondary:hover { background: #bf5fff; color: #000; }
+
+/* ── Company grid ─────────────────────────────────────────────────────── */
+.company-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+
+.btn-company {
+  font-size: 11.5px;
+  padding: 5px 4px;
+  text-align: center;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid;
+  font-weight: 700;
+  background: #111;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.btn-company:hover { opacity: 0.85; box-shadow: 0 0 8px currentColor; }
+
+.btn-company[data-company="github"]    { color: #bf5fff; border-color: #bf5fff; }
+.btn-company[data-company="google"]    { color: #00e5ff; border-color: #00e5ff; }
+.btn-company[data-company="ibm"]       { color: #4d79ff; border-color: #4d79ff; }
+.btn-company[data-company="microsoft"] { color: #00ff88; border-color: #00ff88; }
+.btn-company[data-company="nvidia"]    { color: #b0ff00; border-color: #b0ff00; }
+.btn-company[data-company="amd"]       { color: #ff7c00; border-color: #ff7c00; }
+.btn-company[data-company="adobe"]     { color: #ff2eb8; border-color: #ff2eb8; }
+
+/* ── Scrape status ────────────────────────────────────────────────────── */
+.scrape-status { margin-top: 5px; font-size: 11.5px; min-height: 16px; color: #888; }
+.scrape-status.error   { color: #ff7c00; }
+.scrape-status.success { color: #00ff88; }
+
+/* ── Filter bar ───────────────────────────────────────────────────────── */
+.filter-section { display: flex; gap: 6px; padding: 7px 12px; }
+
+#filter-input {
+  flex: 1;
+  border: 1px solid #ffe600;
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: 12px;
+  outline: none;
+  background: #0d0d00;
+  color: #ffe600;
+}
+#filter-input::placeholder { color: #555; }
+#filter-input:focus { box-shadow: 0 0 8px #ffe600; }
+
+#source-filter {
+  border: 1px solid #ffe600;
+  border-radius: 5px;
+  padding: 5px 4px;
+  font-size: 12px;
+  background: #0d0d00;
+  color: #ffe600;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Job list ─────────────────────────────────────────────────────────── */
+#jobs-container { flex: 1; overflow-y: auto; background: #000; }
+#jobs-list { list-style: none; padding: 4px 0; }
+
+.job-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 7px 12px 7px 8px;
+  border-bottom: 1px solid #1a1a1a;
+  border-left: 3px solid transparent;
+  transition: background 0.12s;
+  background: #0a0a0a;
+}
+.job-item:hover { background: #161616; }
+
+.job-item:has(.dot-linkedin)   { border-left-color: #7b68ee; }
+.job-item:has(.dot-indeed)     { border-left-color: #f59e0b; }
+.job-item:has(.dot-github)     { border-left-color: #bf5fff; }
+.job-item:has(.dot-google)     { border-left-color: #00e5ff; }
+.job-item:has(.dot-ibm)        { border-left-color: #4d79ff; }
+.job-item:has(.dot-microsoft)  { border-left-color: #00ff88; }
+.job-item:has(.dot-nvidia)     { border-left-color: #b0ff00; }
+.job-item:has(.dot-amd)        { border-left-color: #ff7c00; }
+.job-item:has(.dot-adobe)      { border-left-color: #ff2eb8; }
+.job-item:has(.dot-manual)     { border-left-color: #00e5ff; }
+.job-item:has(.dot-other)      { border-left-color: #444; }
+
+/* ── Source dots ──────────────────────────────────────────────────────── */
+.job-source-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  box-shadow: 0 0 5px currentColor;
+}
+.dot-linkedin   { background: #7b68ee; }
+.dot-indeed     { background: #f59e0b; }
+.dot-github     { background: #bf5fff; }
+.dot-google     { background: #00e5ff; }
+.dot-ibm        { background: #4d79ff; }
+.dot-microsoft  { background: #00ff88; }
+.dot-nvidia     { background: #b0ff00; }
+.dot-amd        { background: #ff7c00; }
+.dot-adobe      { background: #ff2eb8; }
+.dot-manual     { background: #00e5ff; }
+.dot-other      { background: #444; }
+
+.job-info { flex: 1; min-width: 0; }
+
+.job-title {
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.job-title:hover { color: #00e5ff; text-decoration: underline; }
+
+.job-meta {
+  font-size: 11px;
+  color: #555;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-delete {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: color 0.15s, background 0.15s;
+}
+.btn-delete:hover { color: #ff7c00; background: #1a0a00; }
+
+.empty-msg { text-align: center; color: #444; padding: 24px 16px; font-size: 12.5px; line-height: 1.6; }
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+footer {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #000;
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(90deg, #bf5fff, #00e5ff) 1;
+}
+footer .btn { flex: 1; text-align: center; }
+
+/* ── Utility ──────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+#jobs-container::-webkit-scrollbar { width: 5px; }
+#jobs-container::-webkit-scrollbar-track { background: #0a0a0a; }
+#jobs-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(#bf5fff, #00e5ff);
+  border-radius: 3px;
+}

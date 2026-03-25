@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Seeker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<!-- Made with love and excitement by Anna Vi11area1 HAPPY HUNTING! -->
+  <header>
+    <div class="header-title">
+      <span class="logo">💼</span>
+      <h1>Job Seeker</h1>
+    </div>
+    <span id="job-count" class="badge">0 saved</span>
+  </header>
+
+  <!-- Search launchers -->
+  <section class="search-section">
+    <p class="section-label">Job boards</p>
+    <div class="search-grid">
+      <button class="btn btn-linkedin" data-site="linkedin" data-role="apprenticeship">🔗 LinkedIn – Apprenticeships</button>
+      <button class="btn btn-linkedin" data-site="linkedin" data-role="internship">🔗 LinkedIn – Internships</button>
+      <button class="btn btn-linkedin" data-site="linkedin" data-role="entry">🔗 LinkedIn – Entry Level</button>
+      <button class="btn btn-indeed"   data-site="indeed"   data-role="apprenticeship">🔍 Indeed – Apprenticeships</button>
+      <button class="btn btn-indeed"   data-site="indeed"   data-role="internship">🔍 Indeed – Internships</button>
+      <button class="btn btn-indeed"   data-site="indeed"   data-role="entry">🔍 Indeed – Entry Level</button>
+    </div>
+  </section>
+
+  <!-- Company career pages -->
+  <section class="company-section">
+    <p class="section-label">Company careers</p>
+    <div class="company-grid">
+      <button class="btn btn-company" data-company="github">🐙 GitHub</button>
+      <button class="btn btn-company" data-company="google">🔵 Google</button>
+      <button class="btn btn-company" data-company="ibm">🔷 IBM</button>
+      <button class="btn btn-company" data-company="microsoft">🪟 Microsoft</button>
+      <button class="btn btn-company" data-company="nvidia">🟢 Nvidia</button>
+      <button class="btn btn-company" data-company="amd">🔴 AMD</button>
+      <button class="btn btn-company" data-company="adobe">🔶 Adobe</button>
+    </div>
+  </section>
+
+  <!-- Scrape trigger -->
+  <section class="scrape-section">
+    <button id="btn-scrape" class="btn btn-scrape">⬇ Scrape Current Page</button>
+    <p id="scrape-status" class="scrape-status"></p>
+  </section>
+
+  <!-- Filter bar -->
+  <section class="filter-section">
+    <input type="text" id="filter-input" placeholder="Filter by title, company…" autocomplete="off">
+    <select id="source-filter">
+      <option value="">All</option>
+      <option value="LinkedIn">LinkedIn</option>
+      <option value="Indeed">Indeed</option>
+      <option value="GitHub">GitHub</option>
+      <option value="Google">Google</option>
+      <option value="IBM">IBM</option>
+      <option value="Microsoft">Microsoft</option>
+      <option value="Nvidia">Nvidia</option>
+      <option value="AMD">AMD</option>
+      <option value="Adobe">Adobe</option>
+      <option value="Manual">Manual</option>
+    </select>
+  </section>
+
+  <!-- Job list -->
+  <div id="jobs-container">
+    <ul id="jobs-list"></ul>
+    <p id="empty-msg" class="empty-msg hidden">No jobs saved yet. Open a search and scrape the results!</p>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <button id="btn-open-options" class="btn btn-secondary">📋 Open Full List</button>
+    <button id="btn-add-manual"   class="btn btn-secondary">＋ Add Manually</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
