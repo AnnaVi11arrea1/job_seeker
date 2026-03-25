@@ -66,6 +66,26 @@
     </form>
   </section>
 
+  <!-- Cloud Backup -->
+  <section id="cloud-section" class="card cloud-card">
+    <h2 class="section-title">☁ Cloud Backup</h2>
+    <div class="cloud-grid">
+      <div class="form-group">
+        <label for="cloud-api-url">Vercel API URL</label>
+        <input id="cloud-api-url" type="text" placeholder="https://your-project.vercel.app">
+      </div>
+      <div class="cloud-actions">
+        <button id="btn-save-cloud" class="btn btn-secondary">💾 Save URL</button>
+        <button id="btn-sync-now"   class="btn btn-secondary">☁ Sync Now</button>
+        <button id="btn-restore"    class="btn btn-danger">↩ Restore from Cloud</button>
+      </div>
+      <div class="cloud-status-row">
+        <span id="cloud-status" class="add-status"></span>
+        <span id="cloud-user-id" class="cloud-user-id" title="Your anonymous backup ID"></span>
+      </div>
+    </div>
+  </section>
+
   <!-- AI Match Analysis -->
   <section id="ai-section" class="card ai-card">
     <h2 class="section-title">🤖 AI Match Analysis</h2>

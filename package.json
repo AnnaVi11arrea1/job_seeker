@@ -1,0 +1,10 @@
+{
+  "name": "job-seeker-api",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": "20.x" },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "ws": "^8.18.0"
+  }
+}

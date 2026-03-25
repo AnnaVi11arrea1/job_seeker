@@ -287,6 +287,30 @@ tr:hover td { background: #111; }
   border-radius: 3px;
 }
 
+/* ── Cloud Backup Section ─────────────────────────────────────────────── */
+.cloud-card { border-left-color: #00e5ff; }
+.cloud-grid { display: flex; flex-direction: column; gap: 14px; }
+.cloud-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.cloud-status-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cloud-user-id {
+  font-size: 11px;
+  color: #666;
+  font-family: monospace;
+  word-break: break-all;
+}
+.btn-danger {
+  background: linear-gradient(135deg, #ff4c4c, #ff7c00);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: opacity .15s;
+}
+.btn-danger:hover { opacity: .85; }
+
 /* ── AI Section ───────────────────────────────────────────────────────── */
 .ai-card { border-left-color: #bf5fff; }
 .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }

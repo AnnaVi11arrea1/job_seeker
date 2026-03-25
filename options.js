@@ -5,6 +5,7 @@ let allJobs = [];
 document.addEventListener('DOMContentLoaded', async () => {
   await loadJobs();
   await loadAISettings();
+  await loadCloudSettings();
   bindEvents();
 
   if (window.location.hash === '#add') {
@@ -16,6 +17,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (area === 'local' && changes.jobs) {
       allJobs = changes.jobs.newValue || [];
       renderTable();
+    }
+    if (area === 'local' && changes.lastSynced) {
+      showLastSynced(changes.lastSynced.newValue);
     }
   });
 
@@ -33,7 +37,66 @@ async function loadJobs() {
   });
 }
 
-async function loadAISettings() {
+async function loadCloudSettings() {
+  return new Promise(resolve => {
+    chrome.runtime.sendMessage({ action: 'getCloudSettings' }, data => {
+      document.getElementById('cloud-api-url').value = data.cloudApiUrl || '';
+      document.getElementById('cloud-user-id').textContent = data.userId ? `🔑 ID: ${data.userId}` : '';
+      if (data.lastSynced) showLastSynced(data.lastSynced);
+      resolve();
+    });
+  });
+}
+
+function showLastSynced(iso) {
+  const el = document.getElementById('cloud-status');
+  if (!iso) return;
+  const d = new Date(iso);
+  el.textContent  = `✓ Last synced ${d.toLocaleString()}`;
+  el.className    = 'add-status success';
+}
+
+function saveCloudSettings() {
+  const url = document.getElementById('cloud-api-url').value.trim().replace(/\/$/, '');
+  chrome.runtime.sendMessage({ action: 'saveCloudSettings', cloudApiUrl: url }, () => {
+    const el = document.getElementById('cloud-status');
+    el.textContent = '✓ Saved';
+    el.className   = 'add-status success';
+    setTimeout(() => { el.textContent = ''; }, 2000);
+  });
+}
+
+async function syncNow() {
+  const el = document.getElementById('cloud-status');
+  el.textContent = '⏳ Syncing…';
+  el.className   = 'add-status';
+  const reply = await chrome.runtime.sendMessage({ action: 'syncNow' });
+  if (reply.success) {
+    el.textContent = `✓ Synced ${reply.count} jobs — ${new Date(reply.lastSynced).toLocaleString()}`;
+    el.className   = 'add-status success';
+  } else {
+    el.textContent = `✗ ${reply.error}`;
+    el.className   = 'add-status error';
+  }
+}
+
+async function restoreFromCloud() {
+  if (!confirm('This will replace your local jobs with the cloud backup. Continue?')) return;
+  const el = document.getElementById('cloud-status');
+  el.textContent = '⏳ Restoring…';
+  el.className   = 'add-status';
+  const reply = await chrome.runtime.sendMessage({ action: 'cloudRestore' });
+  if (reply.success) {
+    el.textContent = `✓ Restored ${reply.count} jobs from cloud`;
+    el.className   = 'add-status success';
+    await loadJobs();
+  } else {
+    el.textContent = `✗ ${reply.error}`;
+    el.className   = 'add-status error';
+  }
+}
+
+// ── AI Settings ────────────────────────────────────────────────────────────
   return new Promise(resolve => {
     chrome.storage.local.get({ resume: '', ollamaUrl: 'http://localhost:11434', ollamaModel: 'llama3.2' }, data => {
       document.getElementById('resume-text').value  = data.resume;
@@ -61,6 +124,9 @@ function bindEvents() {
   document.getElementById('btn-test-ollama').addEventListener('click', testOllamaConnection);
   document.getElementById('btn-analyze').addEventListener('click', analyzeAllJobs);
   document.getElementById('btn-test-one').addEventListener('click', testOneJob);
+  document.getElementById('btn-save-cloud').addEventListener('click', saveCloudSettings);
+  document.getElementById('btn-sync-now').addEventListener('click', syncNow);
+  document.getElementById('btn-restore').addEventListener('click', restoreFromCloud);
 }
 
 // ── Add Job ────────────────────────────────────────────────────────────────

@@ -1,13 +1,36 @@
 // Service worker – handles storage and message passing
 
-// ── Context Menu ───────────────────────────────────────────────────────────
+// ── Install / UUID ─────────────────────────────────────────────────────────
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: 'add-job-page',
     title: '💼 Add job to Job Seeker',
     contexts: ['page', 'link', 'selection'],
   });
+
+  // Generate a persistent anonymous UUID for cloud backup (once only)
+  chrome.storage.local.get({ userId: null }, ({ userId }) => {
+    if (!userId) {
+      const id = crypto.randomUUID();
+      chrome.storage.local.set({ userId: id });
+    }
+  });
 });
+
+// ── Cloud Sync ─────────────────────────────────────────────────────────────
+function cloudSync(jobs) {
+  chrome.storage.local.get({ cloudApiUrl: '', userId: '' }, ({ cloudApiUrl, userId }) => {
+    if (!cloudApiUrl || !userId) return; // not configured — skip silently
+    fetch(`${cloudApiUrl}/api/sync`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, jobs }),
+    })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(() => chrome.storage.local.set({ lastSynced: new Date().toISOString() }))
+      .catch(err => console.warn('Cloud sync failed:', err));
+  });
+}
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== 'add-job-page') return;
@@ -185,6 +208,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
       const merged = [...newJobs, ...jobs]; // newest first
       chrome.storage.local.set({ jobs: merged }, () => {
+        cloudSync(merged);
         sendResponse({ success: true, newCount: newJobs.length, total: merged.length });
       });
     });
@@ -202,6 +226,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     chrome.storage.local.get({ jobs: [] }, ({ jobs }) => {
       const updated = jobs.filter(j => j.id !== message.id);
       chrome.storage.local.set({ jobs: updated }, () => {
+        cloudSync(updated);
         sendResponse({ success: true });
       });
     });
@@ -220,7 +245,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       const idx = jobs.findIndex(j => j.id === message.id);
       if (idx !== -1) {
         jobs[idx] = { ...jobs[idx], ...message.updates };
-        chrome.storage.local.set({ jobs }, () => sendResponse({ success: true }));
+        chrome.storage.local.set({ jobs }, () => {
+          cloudSync(jobs);
+          sendResponse({ success: true });
+        });
       } else {
         sendResponse({ success: false });
       }
@@ -253,6 +281,61 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (message.action === 'getCloudSettings') {
+    chrome.storage.local.get({ cloudApiUrl: '', userId: '', lastSynced: null }, data => {
+      sendResponse(data);
+    });
+    return true;
+  }
+
+  if (message.action === 'saveCloudSettings') {
+    chrome.storage.local.set({ cloudApiUrl: message.cloudApiUrl }, () => {
+      sendResponse({ success: true });
+    });
+    return true;
+  }
+
+  if (message.action === 'syncNow') {
+    chrome.storage.local.get({ jobs: [], cloudApiUrl: '', userId: '' }, ({ jobs, cloudApiUrl, userId }) => {
+      if (!cloudApiUrl || !userId) {
+        sendResponse({ success: false, error: 'Cloud API URL not configured' });
+        return;
+      }
+      fetch(`${cloudApiUrl}/api/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, jobs }),
+      })
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error || r.status)))
+        .then(data => {
+          const ts = new Date().toISOString();
+          chrome.storage.local.set({ lastSynced: ts });
+          sendResponse({ success: true, count: data.count, lastSynced: ts });
+        })
+        .catch(err => sendResponse({ success: false, error: String(err) }));
+    });
+    return true;
+  }
+
+  if (message.action === 'cloudRestore') {
+    chrome.storage.local.get({ cloudApiUrl: '', userId: '' }, ({ cloudApiUrl, userId }) => {
+      if (!cloudApiUrl || !userId) {
+        sendResponse({ success: false, error: 'Cloud API URL not configured' });
+        return;
+      }
+      fetch(`${cloudApiUrl}/api/restore?user_id=${encodeURIComponent(userId)}`)
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e.error || r.status)))
+        .then(data => {
+          if (!Array.isArray(data.jobs)) throw new Error('Invalid response');
+          chrome.storage.local.set({ jobs: data.jobs }, () => {
+            sendResponse({ success: true, count: data.jobs.length });
+          });
+        })
+        .catch(err => sendResponse({ success: false, error: String(err) }));
+    });
+    return true;
+  }
+
   if (message.action === 'addJob') {
     chrome.storage.local.get({ jobs: [] }, ({ jobs }) => {
       const job = message.job;
@@ -262,6 +345,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       const exists = jobs.some(j => j.id === job.id);
       if (!exists) jobs = [job, ...jobs];
       chrome.storage.local.set({ jobs }, () => {
+        if (!exists) cloudSync(jobs);
         sendResponse({ success: true, duplicate: exists });
       });
     });
